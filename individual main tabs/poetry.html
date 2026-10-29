@@ -1829,7 +1829,6 @@ Which is why, I’ve vowed to let you go.
     </div>
     <div class="poem-list-controls">
       <button class="show-more-button" id="show-more-poems" type="button">Show more</button>
-      <button class="show-more-button" id="show-all-poems" type="button">Show all</button>
       <p class="back-to-top"><a href="#top">Back to top</a></p>
     </div>
     <img class="cat-divider" src="../cat-div.png" alt="">
@@ -1936,27 +1935,38 @@ Which is why, I’ve vowed to let you go.
     main.insertBefore(entryFragment, listControls);
 
     const showMoreButton = document.getElementById("show-more-poems");
-    const showAllButton = document.getElementById("show-all-poems");
     const poemsPerPage = 5;
     let visiblePoemCount = Math.min(poemsPerPage, collapsiblePoems.length);
     collapsiblePoems.forEach((entry, index) => {
       entry.hidden = index >= visiblePoemCount;
     });
 
-    function showMorePoems(targetCount = visiblePoemCount + poemsPerPage) {
+    function revealPoemsThrough(targetCount) {
       const nextVisibleCount = Math.min(targetCount, collapsiblePoems.length);
       collapsiblePoems.slice(visiblePoemCount, nextVisibleCount).forEach((entry) => {
         entry.hidden = false;
       });
       visiblePoemCount = nextVisibleCount;
-      showMoreButton.hidden = visiblePoemCount >= collapsiblePoems.length;
-      showAllButton.hidden = visiblePoemCount >= collapsiblePoems.length;
+      const showingAllPoems = visiblePoemCount >= collapsiblePoems.length;
+      showMoreButton.textContent = showingAllPoems ? "Show less" : "Show more";
+      showMoreButton.setAttribute("aria-expanded", String(showingAllPoems));
     }
 
     showMoreButton.hidden = visiblePoemCount >= collapsiblePoems.length;
-    showAllButton.hidden = visiblePoemCount >= collapsiblePoems.length;
-    showMoreButton.addEventListener("click", () => showMorePoems());
-    showAllButton.addEventListener("click", () => showMorePoems(collapsiblePoems.length));
+    showMoreButton.setAttribute("aria-expanded", "false");
+    showMoreButton.addEventListener("click", () => {
+      if (visiblePoemCount >= collapsiblePoems.length) {
+        collapsiblePoems.slice(poemsPerPage).forEach((entry) => {
+          entry.open = false;
+          entry.hidden = true;
+        });
+        visiblePoemCount = Math.min(poemsPerPage, collapsiblePoems.length);
+        showMoreButton.textContent = "Show more";
+        showMoreButton.setAttribute("aria-expanded", "false");
+        return;
+      }
+      revealPoemsThrough(collapsiblePoems.length);
+    });
 
     const popup = document.getElementById("not-written-popup");
     const searchInput = document.getElementById("entry-search");
@@ -2024,7 +2034,7 @@ Which is why, I’ve vowed to let you go.
       if (entryId) {
         const entry = document.getElementById(entryId);
         const entryIndex = collapsiblePoems.indexOf(entry);
-        if (entryIndex >= visiblePoemCount) showMorePoems(entryIndex + 1);
+        if (entryIndex >= visiblePoemCount) revealPoemsThrough(entryIndex + 1);
         if (!requestEntryAccess(Number(number), entry, true)) return;
         popup.classList.remove("is-open");
         entry.open = true;
