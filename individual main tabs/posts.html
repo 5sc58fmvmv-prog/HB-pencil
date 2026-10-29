@@ -33,7 +33,7 @@
       padding:50px;
       margin-bottom:50px;
     }
-    body { background: url("../rainbowgingham.jpeg") repeat fixed; font-family: "Courier New", Courier, monospace; color: #222; margin: 0; padding: 20px 10px; }
+    body { background: url("../rainbowgingham.jpeg") repeat fixed; font-family: "Courier New", Courier, monospace; color: #222; margin: 0; padding: 20px 10px 56px; }
     main {
       position: relative;
       max-width: 760px;
@@ -138,7 +138,7 @@
     <div class="click-wheel"><button class="wheel-btn menu" onclick="togglePlay()">MENU</button><button class="wheel-btn prev" onclick="prevSong()">&#10094;&#10094;</button><button class="wheel-btn next" onclick="nextSong()">&#10095;&#10095;</button><button class="wheel-btn play-pause" onclick="togglePlay()">&#9654;&#10074;&#10074;</button><div class="center-button" onclick="togglePlay()"></div></div>
   </div>
   <audio id="audio-player" preload="auto"></audio>
-  <script src="../music-player.js?v=playback-resume-v7"></script>
+  <script src="../music-player.js?v=autoplay-attempt-v1"></script>
   <script>
     const linkedPost = document.getElementById('being-abroad');
     if (window.location.hash === '#being-abroad' && linkedPost) {

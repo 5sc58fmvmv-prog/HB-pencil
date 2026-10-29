@@ -46,7 +46,7 @@
       font-family: 'Courier New', Courier, monospace;
       color: #222222;
       margin: 0;
-      padding: 20px 10px 20px 5px;
+      padding: 20px 10px 56px 5px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -307,6 +307,27 @@
       font-weight: bold;
     }
 
+    .poem-list-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px auto 0;
+    }
+
+    .show-more-button {
+      padding: 5px 10px;
+      color: #159dcc;
+      background: transparent;
+      border: 2px solid #159dcc;
+      border-radius: 6px;
+      font: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .poem-list-controls .back-to-top { margin: 0; }
+
     .back-to-top:hover,
     .back-to-top:visited,
     .back-to-top:focus {
@@ -522,7 +543,7 @@
         <div class="contents-legend"><span class="poem-entry-heart" aria-hidden="true"></span><span>(click for more)</span></div>
       </div>
       <div class="contents-search">
-        <input id="entry-search" type="number" min="1" max="57" placeholder="Enter 1-57" aria-label="Search poem number">
+        <input id="entry-search" type="number" min="1" max="59" placeholder="Enter 1-59" aria-label="Search poem number">
         <button type="button" id="entry-search-button">Go</button>
       </div>
       </section>
@@ -1806,7 +1827,10 @@ Which is why, I’ve vowed to let you go.
         Maybe forever
       </p>
     </div>
-    <p class="back-to-top"><a href="#top">Back to top</a></p>
+    <div class="poem-list-controls">
+      <button class="show-more-button" id="show-more-poems" type="button">Show more</button>
+      <p class="back-to-top"><a href="#top">Back to top</a></p>
+    </div>
     <img class="cat-divider" src="../cat-div.png" alt="">
   </main>
 
@@ -1830,7 +1854,7 @@ Which is why, I’ve vowed to let you go.
   </div>
 
   <audio id="audio-player" preload="auto"></audio>
-  <script src="../music-player.js?v=playback-resume-v7"></script>
+  <script src="../music-player.js?v=autoplay-attempt-v1"></script>
   <div class="popup" id="not-written-popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
     <div class="popup-box">
       <button class="popup-close" id="popup-close" type="button" aria-label="Close">&times;</button>
@@ -1851,13 +1875,14 @@ Which is why, I’ve vowed to let you go.
   </div>
   <script>
     const main = document.querySelector("main");
-    const backToTop = main.querySelector(".back-to-top");
+    const listControls = main.querySelector(".poem-list-controls");
     const poemEntries = [...main.querySelectorAll(".poem-entry")];
     const entryFragment = document.createDocumentFragment();
     const availableEntries = {};
     const protectedEntryPasscodes = new Map([[40, "lonely"], [3, "4me4me"], [12, "yolo"], [21, "4me4me"], [51, "shy"]]);
     const unlockedEntries = new Set();
     const seenEntryIds = new Set();
+    const collapsiblePoems = [];
 
     function makeCollapsibleEntry(entry) {
       const entryHeader = entry.querySelector(":scope > .poem-entry-header");
@@ -1894,7 +1919,7 @@ Which is why, I’ve vowed to let you go.
       return details;
     }
 
-    main.appendChild(backToTop);
+    main.appendChild(listControls);
     poemEntries.forEach((entry) => {
       if (seenEntryIds.has(entry.id)) {
         entry.remove();
@@ -1902,9 +1927,31 @@ Which is why, I’ve vowed to let you go.
       }
       seenEntryIds.add(entry.id);
       availableEntries[Number(entry.id.replace("entry-", ""))] = entry.id;
-      entryFragment.appendChild(makeCollapsibleEntry(entry));
+      const collapsibleEntry = makeCollapsibleEntry(entry);
+      collapsiblePoems.push(collapsibleEntry);
+      entryFragment.appendChild(collapsibleEntry);
     });
-    main.insertBefore(entryFragment, backToTop);
+    main.appendChild(listControls);
+    main.insertBefore(entryFragment, listControls);
+
+    const showMoreButton = document.getElementById("show-more-poems");
+    const poemsPerPage = 5;
+    let visiblePoemCount = Math.min(poemsPerPage, collapsiblePoems.length);
+    collapsiblePoems.forEach((entry, index) => {
+      entry.hidden = index >= visiblePoemCount;
+    });
+
+    function showMorePoems(targetCount = visiblePoemCount + poemsPerPage) {
+      const nextVisibleCount = Math.min(targetCount, collapsiblePoems.length);
+      collapsiblePoems.slice(visiblePoemCount, nextVisibleCount).forEach((entry) => {
+        entry.hidden = false;
+      });
+      visiblePoemCount = nextVisibleCount;
+      showMoreButton.hidden = visiblePoemCount >= collapsiblePoems.length;
+    }
+
+    showMoreButton.hidden = visiblePoemCount >= collapsiblePoems.length;
+    showMoreButton.addEventListener("click", () => showMorePoems());
 
     const popup = document.getElementById("not-written-popup");
     const searchInput = document.getElementById("entry-search");
@@ -1971,6 +2018,8 @@ Which is why, I’ve vowed to let you go.
       const entryId = availableEntries[number];
       if (entryId) {
         const entry = document.getElementById(entryId);
+        const entryIndex = collapsiblePoems.indexOf(entry);
+        if (entryIndex >= visiblePoemCount) showMorePoems(entryIndex + 1);
         if (!requestEntryAccess(Number(number), entry, true)) return;
         popup.classList.remove("is-open");
         entry.open = true;
@@ -2035,7 +2084,7 @@ Which is why, I’ve vowed to let you go.
       const dividers = mainElement.querySelectorAll(".cat-divider");
       if (dividers.length > 1) {
         mainElement.appendChild(dividers[dividers.length - 1]);
-        mainElement.appendChild(mainElement.querySelector(".back-to-top"));
+        mainElement.appendChild(mainElement.querySelector(".poem-list-controls"));
       }
     })();
   </script>
