@@ -19,6 +19,7 @@ const playbackChannel = typeof BroadcastChannel === "function" ? new BroadcastCh
 let lastLocalPlayAt = 0;
 let currentAudioObjectUrl = null;
 let shouldResumePlayback = false;
+let ownsPlayback = false;
 let lastProgressSaveAt = 0;
 
 const menuButton = document.querySelector(".wheel-btn.menu");
@@ -114,7 +115,7 @@ menuButton?.addEventListener("click", () => setPlaylistMenuOpen(!playlistMenuOpe
 
 function readPlaybackState() {
   try {
-    const savedState = JSON.parse(sessionStorage.getItem(playbackStorageKey));
+    const savedState = JSON.parse(localStorage.getItem(playbackStorageKey));
     if (Number.isInteger(savedState?.trackIndex) && savedState.trackIndex >= 0 && savedState.trackIndex < playlist.length) {
       return { ...savedState, wasPlaying: savedState.wasPlaying === true };
     }
@@ -124,11 +125,11 @@ function readPlaybackState() {
 
 const savedPlaybackState = readPlaybackState();
 if (savedPlaybackState) currentTrackIndex = savedPlaybackState.trackIndex;
-shouldResumePlayback = true;
+shouldResumePlayback = savedPlaybackState ? savedPlaybackState.wasPlaying : true;
 
 function savePlaybackState(wasPlaying = shouldResumePlayback) {
   try {
-    sessionStorage.setItem(playbackStorageKey, JSON.stringify({
+    localStorage.setItem(playbackStorageKey, JSON.stringify({
       trackIndex: currentTrackIndex,
       currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
       wasPlaying
@@ -136,7 +137,9 @@ function savePlaybackState(wasPlaying = shouldResumePlayback) {
   } catch {}
 }
 
-window.addEventListener("pagehide", () => savePlaybackState());
+window.addEventListener("pagehide", () => {
+  if (ownsPlayback) savePlaybackState();
+});
 
 function loadTrack(index) {
   const track = playlist[index];
@@ -168,7 +171,9 @@ function togglePlay() {
     playAudio();
   } else {
     shouldResumePlayback = false;
+    ownsPlayback = false;
     savePlaybackState(false);
+    playbackChannel?.postMessage({ type: "pause", pausedAt: Date.now() });
     audio.pause();
   }
 }
@@ -184,6 +189,7 @@ function prevSong() { changeTrack(-1); }
 
 audio.addEventListener("play", () => {
   shouldResumePlayback = true;
+  ownsPlayback = true;
   lastLocalPlayAt = Date.now();
   ipodStatus.textContent = "Now Playing";
   savePlaybackState(true);
@@ -201,10 +207,16 @@ audio.addEventListener("ended", () => {
 });
 audio.addEventListener("error", () => { ipodStatus.textContent = "Audio unavailable"; });
 playbackChannel?.addEventListener("message", (event) => {
-  if (event.data?.type === "play" && event.data.startedAt > lastLocalPlayAt && !audio.paused) {
+  if (event.data?.type === "play" && event.data.startedAt > lastLocalPlayAt) {
+    lastLocalPlayAt = event.data.startedAt;
+    shouldResumePlayback = true;
+    ownsPlayback = false;
+    if (!audio.paused) audio.pause();
+  } else if (event.data?.type === "pause" && event.data.pausedAt > lastLocalPlayAt) {
+    lastLocalPlayAt = event.data.pausedAt;
     shouldResumePlayback = false;
-    audio.pause();
-    savePlaybackState(false);
+    ownsPlayback = false;
+    if (!audio.paused) audio.pause();
   }
 });
 loadTrack(currentTrackIndex);
@@ -248,7 +260,7 @@ const restorePlayback = async () => {
       } catch {}
     }
   }
-  playAudio();
+  if (shouldResumePlayback) playAudio();
 };
 
 if (audio.readyState >= 1) {
