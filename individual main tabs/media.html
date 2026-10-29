@@ -84,10 +84,11 @@
     .media-panel {
       min-width: 0;
       padding: 16px;
-      background: #fce5ff;
+      background: #eff6ff;
       border: 1px solid #5ab2f5;
       border-radius: 10px;
       box-sizing: border-box;
+      color: #1e3a8a;
       text-align: left;
     }
     .media-panel-title {
@@ -113,8 +114,8 @@
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: 10px 5px;
-      background: #fce5ff;
+      padding: 0 5px 10px;
+      background: #eff6ff;
       border: 1px solid #5ab2f5;
       border-radius: 10px;
       box-sizing: border-box;
@@ -136,9 +137,12 @@
       top: 0;
       z-index: 1;
       margin-top: 0;
-      padding: 8px 0;
-      background: #fce5ff;
+      padding: 4px 0;
+      font-size: 1.1rem;
+      background: #eff6ff;
       border-bottom: 1px solid #5ab2f5;
+      color: #1e3a8a;
+      text-align: center;
     }
     .books-panel .gr-custom-review-toggle { margin-top: 6px; }
     .books-panel .gr-custom-review-toggle > summary {
@@ -250,11 +254,23 @@
       border-radius: 0;
     }
     .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_each_container_"] {
+      position: relative;
       width: 100%;
       clear: both;
       margin-bottom: 10px;
       overflow: auto;
-      padding-bottom: 4px;
+      padding: 8px 0 12px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      color: #1e3a8a;
+    }
+    .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_each_container_"]::after {
+      content: "";
+      position: absolute;
+      left: 3%;
+      bottom: 0;
+      width: 94%;
       border-bottom: 1px solid #5ab2f5;
     }
     .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_book_container_"] {
@@ -266,9 +282,10 @@
     .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_rating_"] img {
       filter: sepia(1) saturate(220%) hue-rotate(292deg) brightness(1.12);
     }
-    .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_author_"] { font-size: 10px; }
+    .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_author_"] { color: #1e3a8a; font-size: 10px; }
     .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_title_"] { overflow-wrap: anywhere; }
-    .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_review_"] { color: #000; overflow-wrap: anywhere; }
+    .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_title_"] a { color: #1e3a8a; }
+    .books-panel #gr_custom_widget_1790998062 [class*="gr_custom_review_"] { color: #1e3a8a; overflow-wrap: anywhere; }
     @media (max-width: 700px) {
       .media-grid { grid-template-columns: 1fr; }
     }
@@ -410,7 +427,7 @@
             by <a rel="nofollow" href="https://www.goodreads.com/author/show/25422.Holly_Black">Holly Black</a>
           </div>
           <div class="gr_custom_review_">
-            I found this book really interesting especially since it followed cardan and spoke more on his past. I would loveeee an entire novel in his pov but idk if that will happen anytime soon 💔 Im glad that he has Jude because I honestly don’t ...
+            I found this book really interesting especially since it followed Cardan and spoke more on his past. I would loveeee an entire novel in his pov but idk if that will happen anytime soon 💔 I'm glad that he has Jude because I honestly don’t ...
           </div>
       </div>
       <div class="gr_custom_each_container_">
@@ -455,31 +472,31 @@ const booksPanel = document.querySelector('.books-panel');
 const moviePanel = document.querySelector('.movie-panel');
 const completeGoodreadsReviews = {
   "The Queen of Nothing": [
-    "OMG, I can’t believe I’ve finally finished the series!! Jude’s shift once moving to the mortal world was insane BUT I never once would’ve expected Taryn to show up with all the news that she did. There were so many parts of this book that left me speechless including Madoc almost KILLING Jude. U don’t understand the relief I felt when the land chose to heal her and accept her as the rightful queen of elfhame. AND GRIMSEN, YOU SLIMY LITTLE PIECE OF CACA I HATEEEE U!!! Like everyone was literally against Cardan from the day he was born yet he managed to end all of it like??? The way he broke the crown was probably one of my favorite parts of the book and JUDES YEARNING FOR CARDAN once he turned into a snake broke me I knew he would come back because howwww in the world would a book ever end that way but I was so glad when he turned back to his fae form 🙏 anyways love it so so much 5/5 read nowww we’re onto the next!!!"
+    "OMG, I can’t believe I’ve finally finished the series!! Jude’s shift once moving to the mortal world was insane BUT I never once would’ve expected Taryn to show up with all the news that she did. There were so many parts of this book that left me speechless including Madoc almost KILLING Jude. U don’t understand the relief I felt when the land chose to heal her and accept her as the rightful queen of Elfhame. AND GRIMSEN, YOU SLIMY LITTLE PIECE OF CACA I HATEEEE U!!! Like everyone was literally against Cardan from the day he was born yet he managed to end all of it like??? The way he broke the crown was probably one of my favorite parts of the book and JUDE'S YEARNING FOR CARDAN once he turned into a snake broke me I knew he would come back because howwww in the world would a book ever end that way but I was so glad when he turned back to his fae form 🙏 anyways love it so so much 5/5 read nowww we’re onto the next!!!"
   ].join(" "),
   "The Fine Print": [
     "Read this book cuz many ppl were talking abt it and was kinda disappointed? Maybe my expectations were just far too high but I honestly didn’t enjoy it much. I would read and giggle at times but at others I was like 😐. When I would read and get to the “parts” I’d read and once I fully processed what I was reading I was like “Naurrr”. The ending is cute tho I’m glad they get married but I feel like Zahra’s character was kinda baby-ish? She’s a good person and bubbly with what some may call a sad backstory but I feel like those types of experiences make you more mature. Sure, she was mature in certain aspects but in others not so much. Rowan was also a straight up freak tell me why he had an erection for 90% of the book?? This book was basically hot garbage(no offence) and everything felt very rushed. Rowan is her BOSS, keyword; BOSS!!! She should’ve been fired imo how tf r u gonna call ur boss an asshole straight to his face?? Anyways I don’t feel like reading the next book cuz I can already predict what’s gonna happen because the whole plot is as flat as a plastic cutting board. 1/5 and I’m only giving it THAT HIGH of a rating because the app doesn’t let me give anything lower. Would definitely give this book to my enemy as a form of torture 😃."
   ].join(" "),
   "The Girl Who Fell Beneath the Sea": [
-    "This book was so so good, the string of fate and the plot twist with shin being the REAL sea god who gave up his soul to fulfill the emperors dying wish was insaneeee. I never expected that and the fact that both the emperor and shin were in love with Mina???? I love love triangles but this one was so insanely intense and I loved that so so so much!! The goddess of moon and memory was such an amazing character in the book and I feel like her character arc made everything that much better. This book was unlike any other that I’ve read before so I give it a decent rating of 4/5!!"
+    "This book was so so good, the string of fate and the plot twist with Shin being the REAL sea god who gave up his soul to fulfill the emperor's dying wish was insaneeee. I never expected that and the fact that both the emperor and Shin were in love with Mina???? I love love triangles but this one was so insanely intense and I loved that so so so much!! The goddess of moon and memory was such an amazing character in the book and I feel like her character arc made everything that much better. This book was unlike any other that I’ve read before so I give it a decent rating of 4/5!!"
   ].join(" "),
   "The Spanish Love Deception": [
     "I read almost 300 pages and imo this book is ASS!!! Idrk why I went on reading it for so long but I honestly didn’t like it. Catalina is extremely dense and Aaron (wannabe warner) is literally so awkward. I tried on multiple occasions to pick the book back up again but just couldn’t cuz each time I’d open it I cringed and felt EXTREMELY BORED."
   ].join(" "),
   "It Ends with Us": [
-    "Just no. How does miss girl cook food in the kitchen while ONLY wearing an apron?!!!???! I don’t remember her exact words but she said smt along the lines of: “When we kiss, there’s no stopping at just that.” AND THEN PROCEEDS TO DO THE DEED IN HER OWN FLOWERSHOP!!!! Im appalled, how do I unread this? 😭😭😭."
+    "Just no. How does miss girl cook food in the kitchen while ONLY wearing an apron?!!!???! I don’t remember her exact words but she said smt along the lines of: “When we kiss, there’s no stopping at just that.” AND THEN PROCEEDS TO DO THE DEED IN HER OWN FLOWERSHOP!!!! I'm appalled, how do I unread this? 😭😭😭."
   ].join(" "),
   "Unravel the Dusk": [
-    "I think I may have enjoyed this book more than the first wow. The war was so descriptive and I was able to imagine everything. My heart broke when Maia lost her memories and when she began transforming into something that she hated. The ending was so cute I love Edan sm he literally built her a boat whattt!!??!!! Lady sarnai was just misunderstood, she’s actually a really good person 🤍 5/5 read and would def read it again!!"
+    "I think I may have enjoyed this book more than the first wow. The war was so descriptive and I was able to imagine everything. My heart broke when Maia lost her memories and when she began transforming into something that she hated. The ending was so cute I love Edan sm he literally built her a boat whattt!!??!!! Lady Sarnai was just misunderstood, she’s actually a really good person 🤍 5/5 read and would def read it again!!"
   ].join(" "),
   "The Housemaid": [
-    "SOOO GOOD OMDS!! Soooo many plot twists and i was genuinely shocked each time because each twist was even crazier the last one. I wanted to put it down but I physically couldn’t because I needed to know what would happen next. I 100% recommend this to anyone who is trying to get out of a reading slump this book WONT disappoint. I love you Frieda, ur such an amazing author…can’t wait to start the next book!!!"
+    "SOOO GOOD OMDS!! Soooo many plot twists and i was genuinely shocked each time because each twist was even crazier the last one. I wanted to put it down but I physically couldn’t because I needed to know what would happen next. I 100% recommend this to anyone who is trying to get out of a reading slump this book WONT disappoint. I love you Freida, ur such an amazing author…can’t wait to start the next book!!!"
   ].join(" "),
   "Things Fall Apart": [
     "I was meant to read this for my university class and felt like I wouldn’t enjoy it because obviously, it was chosen by my professor, however it was truly an amazing novel. I never thought that I’d enjoy it as much as I did and the way that Okonkwo (protag), a great warrior of high title and wealth had his life and all of his accomplishments diminished to a single paragraph. Just WOW."
   ].join(" "),
   "Spin the Dawn": [
-    "I really enjoyed the book cuz the plot was different and I enjoyed that. LOVED EDANS character but I was so confused cuz Maia hated him and within like five pages she was swooning for him?? I mean the duality is insane but like…Anyways I guess I like their relationship, it’s cute. Excited to read the second book!!"
+    "I really enjoyed the book cuz the plot was different and I enjoyed that. LOVED EDAN'S character but I was so confused cuz Maia hated him and within like five pages she was swooning for him?? I mean the duality is insane but like…Anyways I guess I like their relationship, it’s cute. Excited to read the second book!!"
   ].join(" "),
   "Caraval": [
     "This book was disgustingly well written to the point where I could LITERALLY envision everything that was going on. It has so many plot twists and many of them were things that I didn’t even think could be a possibility. I LOVED IT, I’ll be starting spectacular tonight!!!"
@@ -488,14 +505,14 @@ const completeGoodreadsReviews = {
     "Just finished the book and it’s nothing like the show. Belly’s kind of a brat and I felt annoyed with how she left cam. Also like girllllllll I thought she was gonna go for jere on the beach especially knowing the fact that he confessed his love or wtv but then they revealed she was with CONRAD?? The plot line is confusing and messy and I also feel like Jenny Han is obsessed with the Asian girl and white boy trope? I give this book 3/5 cuz it kept me busy but at the same time…yea, I probably wouldn’t re-read it."
   ].join(" "),
   "The Cruel Prince": [
-    "I honestly did find it interesting and Jude’s actions somewhat shocked me however i feel like it was a little overhyped or perhaps I feel that way because I read it over the span of a month which caused me to have a bad memory? Anyways can’t wait to read the next ones! (EDIT: So it turns out i didnt entirely complete the books which is why my rating of 3 stars has turned into a 3.5…whoops! Anyways the reason for the change in ratings is because of the many plot twists that happened near the end. I LOVED cardan revealing his true feelings it took him so long but it finally happened and was lwk worth the wait. Can’t wait to read the next books!!",
-    "I found this book really interesting especially since it followed cardan and spoke more on his past. I would loveeee an entire novel in his pov but idk if that will happen anytime soon 💔 Im glad that he has Jude because I honestly don’t think that anybody else ever truly loved or cared for him the way that she does and that idea seemed even truer when he caught his supposed friends getting down and dirty like what??? Very quick read and I enjoyed ittttt 3.5/5!!!"
+    "I honestly did find it interesting and Jude’s actions somewhat shocked me however I feel like it was a little overhyped or perhaps I feel that way because I read it over the span of a month which caused me to have a bad memory? Anyways can’t wait to read the next ones! (EDIT: So it turns out I didn't entirely complete the books which is why my rating of 3 stars has turned into a 3.5…whoops! Anyways the reason for the change in ratings is because of the many plot twists that happened near the end. I LOVED Cardan revealing his true feelings it took him so long but it finally happened and was lwk worth the wait. Can’t wait to read the next books!!",
+    "I found this book really interesting especially since it followed Cardan and spoke more on his past. I would loveeee an entire novel in his pov but idk if that will happen anytime soon 💔 I'm glad that he has Jude because I honestly don’t think that anybody else ever truly loved or cared for him the way that she does and that idea seemed even truer when he caught his supposed friends getting down and dirty like what??? Very quick read and I enjoyed ittttt 3.5/5!!!"
   ].join(" "),
   "The Wicked King": [
     "THIS BOOK WAS EXTREMELY GOOD!! So many plot twists happened and we got to see new sides of Jude that I wasn’t really expecting at all. THE ENDING THO - MARRIAGE AND EXILE?!?! I was BAFFLED, this book is probably my fave of the series I can’t wait to finish the next!!"
   ].join(" "),
   "How the King of Elfhame Learned to Hate Stories": [
-    "I found this book really interesting especially since it followed cardan and spoke more on his past. I would loveeee an entire novel in his pov but idk if that will happen anytime soon 💔 Im glad that he has Jude because I honestly don’t think that anybody else ever truly loved or cared for him the way that she does and that idea seemed even truer when he caught his supposed friends getting down and dirty like what??? Very quick read and I enjoyed ittttt 3.5/5!!!"
+    "I found this book really interesting especially since it followed Cardan and spoke more on his past. I would loveeee an entire novel in his pov but idk if that will happen anytime soon 💔 I'm glad that he has Jude because I honestly don’t think that anybody else ever truly loved or cared for him the way that she does and that idea seemed even truer when he caught his supposed friends getting down and dirty like what??? Very quick read and I enjoyed ittttt 3.5/5!!!"
   ].join(" "),
   "Shatter Me": [
     "I LOVE LOVE LOVEEEEE THIS BOOK!! I FELT BAD FOR AARON WHEN JULIETTE TRICKED HIM AND EVERYTHING BUT HE LOWKEY DESERVED IT!!! KENJI IS COOL 😋 I ship Adam and Juliette BUTTTT I want Aaron to have a redemption arc and end up with her…I ACTUALLY THINK HE GENUINELY CARES FOR HER?!?! Idk…anyways I loveee this book 🤗"

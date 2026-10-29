@@ -527,21 +527,60 @@
       </div>
       </section>
 
+      <div class="poem-entry" id="entry-59">
+      <div class="poem-entry-header">
+        <div>
+      <p class="entry-number">Entry 59</p>
+          <h2 class="poem-title">Intellect</h2>
+        </div>
+        <p class="poem-date">2026/23/10</p>
+      </div>
+      <p class="poem-intro">What is it about my intellect that frightens you? 
+Shouldn’t you want me to know more? 
+What kind of life would I be living - and more specifically, what kind of life would I be normalizing to my future children?
+My ambitions should be as big as I want, not as small as you desire.
+You follow religion, but it’s clear that culture is what shines brightest in your eyes.
+I’m done being small, 
+God granted me life to live,
+Not for me to concede it - especially not to you. 
+
+       <div class="poem-entry" id="entry-58">
+      <div class="poem-entry-header">
+        <div>
+      <p class="entry-number">Entry 58</p>
+          <h2 class="poem-title">I'll know</h2>
+        </div>
+        <p class="poem-date">2026/18/10</p>
+      </div>
+      <p class="poem-intro">When the sun sets and the cold settles,
+I’ll know. 
+I’ll feel your change and hold disdain towards the darkness in front of me.
+Push and pull; get to know me but for naught. 
+There’s so much I like but so much I can’t accept.
+I’ll hold the memory of you in my heart - but I can’t take it anymore.
+I wanted to be all that you wanted,
+But I now realize that that’s impossible.
+I wasn’t made to be consumed. 
+
+
        <div class="poem-entry" id="entry-57">
       <div class="poem-entry-header">
         <div>
       <p class="entry-number">Entry 57</p>
           <h2 class="poem-title">Mystery</h2>
         </div>
-        <p class="poem-date">2026/09/09</p>
+        <p class="poem-date">2026/18/10</p>
       </div>
-      <p class="poem-intro">Every single person is a mystery,
-To me, you were an empty map.
-As soon as I discovered a new island, I was on the prow for another.
-You seemed to be just as interested in me, perhaps even more so,
-But if that were truly the case,
-You would’ve stayed and explored - 
-Heart and soul.
+      <p class="poem-intro">When the sun sets and the cold settles,
+I’ll know. 
+I’ll feel your change and hold disdain towards the darkness in front of me.
+Push and pull; get to know me but for naught. 
+There’s so much I like but so much I can’t accept.
+I’ll hold the memory of you in my heart - but I can’t take it anymore.
+I wanted to be all that you wanted,
+But I now realize that that’s impossible.
+I wasn’t made to be consumed. 
+
 
          <div class="poem-entry" id="entry-56">
       <div class="poem-entry-header">
@@ -1676,7 +1715,7 @@ Which is why, I’ve vowed to let you go.
         I want you to know how I feel, but I know what will happen next
         The thrill of being liked back isn't the same as the thrill that comes with having a crush,
         If I know that you like me back, I'll just give up
-        My reasoning isn't logival but it's the way my brain works.
+        My reasoning isn't logical but it's the way my brain works.
         I want to be loved, in fact, I crave it
         But deep down, I know that I'm not made for it
         I run around in my mind thinking of a future with another person when I know that it isn't likely to happen
@@ -1823,11 +1862,14 @@ Which is why, I’ve vowed to let you go.
     function makeCollapsibleEntry(entry) {
       const entryHeader = entry.querySelector(":scope > .poem-entry-header");
       const title = entryHeader.querySelector(".poem-title");
+      const poemIntro = entry.querySelector(":scope > .poem-intro");
+      if (poemIntro) poemIntro.textContent = poemIntro.textContent.trim();
       const entryNumber = entryHeader.querySelector(".entry-number");
       const date = entryHeader.querySelector(".poem-date");
       const details = document.createElement("details");
       details.className = entry.className;
       details.id = entry.id;
+      details.name = "poem-entries";
 
       const summary = document.createElement("summary");
       summary.className = "poem-entry-header";
@@ -1907,6 +1949,16 @@ Which is why, I’ve vowed to let you go.
       });
     });
 
+    function centerEntry(entry) {
+      requestAnimationFrame(() => entry.scrollIntoView({ behavior: "smooth", block: "center" }));
+    }
+
+    main.querySelectorAll("details.poem-entry").forEach((entry) => {
+      entry.addEventListener("toggle", () => {
+        if (entry.open) centerEntry(entry);
+      });
+    });
+
     window.addEventListener("pageshow", () => {
       protectedEntryPasscodes.forEach((_, entryNumber) => {
         const entry = document.getElementById(availableEntries[entryNumber]);
@@ -1922,7 +1974,7 @@ Which is why, I’ve vowed to let you go.
         if (!requestEntryAccess(Number(number), entry, true)) return;
         popup.classList.remove("is-open");
         entry.open = true;
-        requestAnimationFrame(() => entry.scrollIntoView({ behavior: "auto", block: "center" }));
+        centerEntry(entry);
         return;
       }
       popup.classList.add("is-open");
@@ -1949,7 +2001,7 @@ Which is why, I’ve vowed to let you go.
       closePasscodePopup();
       if (!entry) return;
       entry.open = true;
-      if (shouldScroll) requestAnimationFrame(() => entry.scrollIntoView({ behavior: "auto", block: "center" }));
+      if (shouldScroll) centerEntry(entry);
     });
 
     document.getElementById("passcode-close").addEventListener("click", closePasscodePopup);
