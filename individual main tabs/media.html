@@ -159,6 +159,19 @@
       flex-direction: column;
       min-height: 0;
     }
+    .media-list-more {
+      flex: 0 0 auto;
+      width: fit-content;
+      margin: 8px auto 0;
+      padding: 5px 10px;
+      color: #159dcc;
+      border: 2px solid #159dcc;
+      border-radius: 6px;
+      background: transparent;
+      font: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
     .movie-panel #letterboxd-embed-wrapper-tc .letterboxd-embed-tc-divider {
       border-bottom-color: #5ab2f5;
     }
@@ -242,6 +255,16 @@
       overflow-wrap: anywhere;
     }
     .movie-panel #letterboxd-embed-wrapper-tc .letterboxd-embed-tc-review { color: #000; }
+    .movie-panel .letterboxd-review-toggle { margin-top: 5px; }
+    .movie-panel .letterboxd-review-toggle > summary {
+      width: fit-content;
+      color: #ff95ce;
+      cursor: pointer;
+      font-weight: bold;
+      list-style: none;
+    }
+    .movie-panel .letterboxd-review-toggle > summary::-webkit-details-marker { display: none; }
+    .movie-panel .letterboxd-review-toggle > summary::marker { content: ""; }
     .movie-panel #letterboxd-embed-wrapper-tc .letterboxd-embed-tc-divider {
       border-bottom: 1px solid #5ab2f5;
     }
@@ -458,10 +481,12 @@
 
       </div>
       <script src="https://www.goodreads.com/review/custom_widget/157039478.Hasna's%20bookshelf:%20read?cover_position=middle&amp;cover_size=medium&amp;num_books=100&amp;order=d&amp;shelf=read&amp;show_author=1&amp;show_cover=1&amp;show_rating=1&amp;show_review=1&amp;show_tags=1&amp;show_title=1&amp;sort=date_added&amp;widget_bg_color=FFFFFF&amp;widget_bg_transparent=&amp;widget_border_width=1&amp;widget_id=1790998062&amp;widget_text_color=000000&amp;widget_title_size=large&amp;widget_width=medium" type="text/javascript" charset="utf-8"></script>
+      <button class="media-list-more" id="books-show-more" type="button" hidden>Show more</button>
       </section>
       <section class="media-panel movie-panel" aria-labelledby="movies-title">
-        <h2 class="media-panel-title" id="movies-title">Movies and shows!</h2>
+        <h2 class="media-panel-title" id="movies-title">MOVIES!</h2>
         <div id="letterboxd-embed-wrapper-tc">Loading...</div>
+        <button class="media-list-more" id="movies-show-more" type="button" hidden>Show more</button>
       </section>
     </div>
 <script>
@@ -470,6 +495,8 @@ const letterboxdProxyUrl = `https://cors.eu.org/${letterboxdRssUrl}`;
 const movieFeed = document.getElementById('letterboxd-embed-wrapper-tc');
 const booksPanel = document.querySelector('.books-panel');
 const moviePanel = document.querySelector('.movie-panel');
+const booksShowMoreButton = document.getElementById('books-show-more');
+const moviesShowMoreButton = document.getElementById('movies-show-more');
 const completeGoodreadsReviews = {
   "The Queen of Nothing": [
     "OMG, I can’t believe I’ve finally finished the series!! Jude’s shift once moving to the mortal world was insane BUT I never once would’ve expected Taryn to show up with all the news that she did. There were so many parts of this book that left me speechless including Madoc almost KILLING Jude. U don’t understand the relief I felt when the land chose to heal her and accept her as the rightful queen of Elfhame. AND GRIMSEN, YOU SLIMY LITTLE PIECE OF CACA I HATEEEE U!!! Like everyone was literally against Cardan from the day he was born yet he managed to end all of it like??? The way he broke the crown was probably one of my favorite parts of the book and JUDE'S YEARNING FOR CARDAN once he turned into a snake broke me I knew he would come back because howwww in the world would a book ever end that way but I was so glad when he turned back to his fae form 🙏 anyways love it so so much 5/5 read nowww we’re onto the next!!!"
@@ -534,6 +561,49 @@ function enablePinkScrollbar(scrollArea) {
 enablePinkScrollbar(movieFeed);
 const goodreadsWidget = document.getElementById('gr_custom_widget_1790998062');
 enablePinkScrollbar(goodreadsWidget);
+
+function setupMediaPagination(container, selector, button, hideMovieDividers = false) {
+  let visibleCount = 5;
+
+  function updateVisibility() {
+    const items = [...container.querySelectorAll(selector)];
+    items.forEach((item, index) => {
+      const isHidden = index >= visibleCount;
+      item.hidden = isHidden;
+      if (hideMovieDividers) {
+        const divider = item.nextElementSibling;
+        if (divider?.matches('.letterboxd-embed-tc-divider')) {
+          divider.hidden = isHidden || index === visibleCount - 1;
+        }
+      }
+    });
+    button.hidden = items.length <= 5;
+    const showingAll = visibleCount >= items.length;
+    button.textContent = showingAll ? 'Show less' : 'Show more';
+    button.setAttribute('aria-expanded', String(items.length > 5 && showingAll));
+  }
+
+  button.addEventListener('click', () => {
+    const itemCount = container.querySelectorAll(selector).length;
+    visibleCount = visibleCount >= itemCount ? 5 : Math.min(visibleCount + 5, itemCount);
+    updateVisibility();
+  });
+
+  updateVisibility();
+  return updateVisibility;
+}
+
+const updateBooksVisibility = setupMediaPagination(
+  goodreadsWidget,
+  '[class*="gr_custom_each_container_"]',
+  booksShowMoreButton
+);
+const updateMoviesVisibility = setupMediaPagination(
+  movieFeed,
+  '.letterboxd-embed-tc-diary-entry',
+  moviesShowMoreButton,
+  true
+);
 
 function makeGoodreadsReviewsCollapsible() {
   goodreadsWidget.querySelectorAll('[class*="gr_custom_each_container_"]').forEach(book => {
@@ -610,15 +680,11 @@ function parseRss2Json(data) {
 }
 
 async function loadLetterboxdEntries() {
-  try {
-    return parseLetterboxdRss(await fetchLetterboxdRss());
-  } catch {
-    const rssUrl = `https://letterboxd.com/0bl1vious/rss/`;
-    const fallbackUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-    const response = await fetch(fallbackUrl, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`RSS fallback returned ${response.status}`);
-    return parseRss2Json(await response.json());
-  }
+  const response = await fetch('../letterboxd-feed.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Letterboxd feed returned ${response.status}`);
+  const entries = await response.json();
+  if (!Array.isArray(entries) || !entries.length) throw new Error('Letterboxd feed has no entries');
+  return entries;
 }
 
 function renderDiaryEntry(diaryData, index, total, container) {
@@ -680,10 +746,16 @@ function renderDiaryEntry(diaryData, index, total, container) {
     details.appendChild(rating);
   }
   if (reviewText) {
+    const reviewToggle = document.createElement('details');
+    reviewToggle.className = 'letterboxd-review-toggle';
+    const reviewSummary = document.createElement('summary');
+    reviewSummary.textContent = '...';
+    reviewSummary.setAttribute('aria-label', 'Toggle movie review');
     const review = document.createElement('div');
     review.className = 'letterboxd-embed-tc-review';
     review.textContent = reviewText;
-    details.appendChild(review);
+    reviewToggle.append(reviewSummary, review);
+    details.appendChild(reviewToggle);
   }
   content.appendChild(details);
   entry.appendChild(content);
@@ -714,6 +786,7 @@ loadLetterboxdEntries()
     list.className = 'letterboxd-embed-tc';
     entries.forEach((entry, index) => renderDiaryEntry(entry, index, entries.length, list));
     movieFeed.replaceChildren(list);
+    updateMoviesVisibility();
   })
   .catch(() => {
     movieFeed.textContent = 'The Letterboxd feed could not be loaded right now.';
