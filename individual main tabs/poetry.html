@@ -1965,7 +1965,7 @@ Which is why, I’ve vowed to let you go.
         showMoreButton.setAttribute("aria-expanded", "false");
         return;
       }
-      revealPoemsThrough(collapsiblePoems.length);
+      revealPoemsThrough(visiblePoemCount + poemsPerPage);
     });
 
     const popup = document.getElementById("not-written-popup");
